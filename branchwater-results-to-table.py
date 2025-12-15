@@ -24,6 +24,8 @@ def main():
     date_suffix = date.today().isoformat()
     combined_output_path = output_folder / f"full_phase2_linkage_table_{date_suffix}.tsv"
 
+    total_branchwater_files_processed = 0
+
     # The script makes both a combined output table and individual tables per catalogue
     # Start the combined output file and print the header to it
     with combined_output_path.open("w", newline="") as combined_out:
@@ -33,7 +35,7 @@ def main():
         with input_csv.open(newline="") as csv_in:
             samplesheet_reader = csv.reader(csv_in)
             for catalogue, branchwater_folder, metadata_table in samplesheet_reader:
-                process_catalogue(
+                processed_count = process_catalogue(
                     catalogue=catalogue,
                     branchwater_folder=Path(branchwater_folder),
                     metadata_table=Path(metadata_table),
@@ -41,6 +43,8 @@ def main():
                     date_suffix=date_suffix,
                     full_writer=full_writer,
                 )
+                total_branchwater_files_processed += processed_count
+    logging.info(f"Processing is completed. Total processed branchwater outputs: {total_branchwater_files_processed}.")
 
 
 def process_catalogue(
@@ -51,10 +55,9 @@ def process_catalogue(
     date_suffix: str,
     full_writer,
 ):
-    logging.info(f"Processing catalogue {catalogue}")
+    logging.info(f"Currently processing: {catalogue}")
 
     species_reps = load_metadata_table(metadata_table)
-    logging.info(f"Expecting {len(species_reps)} species representatives")
 
     csv_files, missing = get_csvs(branchwater_folder, species_reps)
     if missing:
@@ -63,6 +66,7 @@ def process_catalogue(
             "\n".join(sorted(missing))
         )
 
+    logging.info(f"Processing {len(species_reps)} species representatives")
     catalogue_path = output_folder / f"{catalogue}_phase2_linkage_table_{date_suffix}.tsv"
 
     with catalogue_path.open("w", newline="") as cat_out:
@@ -76,6 +80,7 @@ def process_catalogue(
                 writer,
                 full_writer
             )
+    return len(csv_files)
 
 
 def process_branchwater_file(path: Path, catalogue_writer, full_writer):
