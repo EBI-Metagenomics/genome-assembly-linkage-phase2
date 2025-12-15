@@ -154,7 +154,7 @@ def test_process_catalogue_happy_path(tmp_path):
     write_csv(
         metadata,
         header=["Species_rep"],
-        rows=[["rep1"], ["rep2"]],
+        rows=[["MGYG0001"], ["MGYG0002"]],
         delimiter="\t",
     )
 
