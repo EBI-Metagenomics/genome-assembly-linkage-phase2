@@ -20,7 +20,12 @@ The script accepts a CSV file as input. The file should have no header and shoul
       MGYG000305249_1,e5183e097fc19da8072390cada1ef313,SRR12529272,0.6349775784753363,1416,21,1000,DNA,,,,0.9786052524151458
       MGYG000305249_1,e5183e097fc19da8072390cada1ef313,ERR2019398,0.2632286995515695,587,21,1000,DNA,,,,0.9384190617731216
   ```
+  Command to generate a branchwater output for a genome (using the branchwater plugin and a pre-computed genome signature):
+  ```
+  sourmash scripts manysearch ${ACCESSION}.fna.sig branchwater_db/index/ -o Marine_sediment_v1.0/${ACCESSION}.csv -k 21 -s 1000 -t 0.1
+  ```
 - path to the catalogue metadata table
+
 
 Input file example:
 ```bash
@@ -51,7 +56,7 @@ python3 branchwater_results_to_table.py -i samplesheet.csv -o final_table_folder
 
 ### Output
 The script will save a combined TSV file (`full_phase2_linkage_table_{date}.tsv`) to the output folder.
-It will also create individual, per-catalogue outputs.
+It will also create individual, per-catalogue outputs. Only records with containment of at least 50% will be included in the results tables.
 
 Example:
 ```bash
