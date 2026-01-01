@@ -7,6 +7,7 @@ import csv
 from datetime import date
 from pathlib import Path
 from tqdm import tqdm
+from typing import Set, List, Tuple
 
 logging.basicConfig(level=logging.INFO)
 
@@ -14,7 +15,7 @@ HEADER = ["Run", "Genome_Mgnify_accession", "Containment", "cANI"]
 CONTAINMENT_THRESHOLD = 0.5
 
 
-def main():
+def main() -> None:
     args = parse_args()
 
     input_csv = Path(args.input_csv)
@@ -53,8 +54,8 @@ def process_catalogue(
     metadata_table: Path,
     output_folder: Path,
     date_suffix: str,
-    full_writer,
-):
+    full_writer: csv.writer,
+) -> int:
     logging.info(f"Currently processing: {catalogue}")
 
     species_reps = load_metadata_table(metadata_table)
@@ -83,7 +84,11 @@ def process_catalogue(
     return len(csv_files)
 
 
-def process_branchwater_file(path: Path, catalogue_writer, full_writer):
+def process_branchwater_file(
+    path: Path,
+    catalogue_writer: csv.writer,
+    full_writer: csv.writer,
+) -> None:
     with path.open(newline="") as infile:
         reader = csv.DictReader(infile)
 
@@ -111,7 +116,7 @@ def process_branchwater_file(path: Path, catalogue_writer, full_writer):
             full_writer.writerow(record)
 
 
-def load_metadata_table(metadata_table):
+def load_metadata_table(metadata_table: Path) -> Set[str]:
     species_reps = set()
     with open(metadata_table, newline="") as metadata_in:
         metadata_reader = csv.DictReader(metadata_in, delimiter="\t")
@@ -120,7 +125,10 @@ def load_metadata_table(metadata_table):
     return species_reps
 
 
-def get_csvs(folder_path, species_reps):
+def get_csvs(
+    folder_path: Path,
+    species_reps: Set[str],
+) -> Tuple[List[str], Set[str]]:
     expected = {f"{rep}.csv" for rep in species_reps}
     found = {f for f in os.listdir(folder_path) if f.endswith(".csv")}
 
