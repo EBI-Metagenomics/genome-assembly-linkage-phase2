@@ -8,7 +8,7 @@ The script expects that branchwater has already been executed for each species r
 The script accepts a CSV file as input. The file should have no header and should contain the following columns:
 - name of catalogue 
 
-  *(free text, primarily for the user to distinguish between catalogues, does not need to match 
+  *(free text but no spaces, primarily for the user to distinguish between catalogues, does not need to match 
   anything on the website or in the db)*
 - path to the branchwater output folder 
 
